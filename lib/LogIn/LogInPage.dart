@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
+
+final String ServerURL = 'http://192.168.1.2:8080/logIn';
 
 class LogInPage extends StatefulWidget {
   @override
@@ -15,12 +21,24 @@ class _LogInPage extends State<LogInPage> {
   final passwordController = TextEditingController();
   final blueColor = Color(0xff1BA1F3);
   final backgroundColor = Color(0xff000000);
+
+  double greyFontSize = 20;
+  double whiteFontSize = 25;
+
+  bool isFormDone = false;
+  bool showPassword = false;
+  changeFormDone(isActive) {
+    setState(() {
+      isFormDone = isActive;
+    });
+  }
+
   Widget _buildAppbar() {
     return AppBar(
       leading: BackButton(color: blueColor),
       actions: <Widget>[
         FlatButton(
-          onPressed: () => Navigator.pushNamed(context, '/signUpPage'),
+          onPressed: () => Navigator.pushNamed(context, '/signUpPage1'),
           child: Text(
             "Sign up",
             style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
@@ -48,6 +66,10 @@ class _LogInPage extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
+    passwordController.addListener(() {
+      changeFormDone(passwordController.text.length >= 8 &&
+          usernameController.text.length != 0);
+    });
     return Scaffold(
       // appBar: AppBar(title: Text("Log in")),
       appBar: _buildAppbar(),
@@ -69,7 +91,7 @@ class _LogInPage extends State<LogInPage> {
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                       color: Colors.white,
-                      fontSize: 20.0,
+                      fontSize: whiteFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -82,14 +104,17 @@ class _LogInPage extends State<LogInPage> {
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                       color: Color(0xff717576),
-                      fontSize: 12.0,
+                      fontSize: greyFontSize,
                       letterSpacing: 0.5,
                     ),
                   ),
                 ),
                 Container(
-                  height: 25.0,
+                  height: 45.0,
                   child: TextField(
+                    controller: usernameController,
+                    style: TextStyle(
+                        fontSize: whiteFontSize - 3, color: Colors.white),
                     decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: blueColor, width: 2.0)),
@@ -107,15 +132,30 @@ class _LogInPage extends State<LogInPage> {
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                       color: Color(0xff717576),
-                      fontSize: 12.0,
-                      letterSpacing: 0.5,
+                      fontSize: greyFontSize,
                     ),
                   ),
                 ),
                 Container(
-                  height: 25.0,
+                  height: 45.0,
                   child: TextField(
+                    controller: passwordController,
+                    obscureText: !showPassword,
+                    style: TextStyle(
+                        fontSize: whiteFontSize - 3, color: Colors.white),
                     decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                            showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              showPassword = !showPassword;
+                            });
+                          }),
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: blueColor, width: 2.0)),
                       enabledBorder: UnderlineInputBorder(
@@ -137,8 +177,7 @@ class _LogInPage extends State<LogInPage> {
                         style: GoogleFonts.lato(
                           textStyle: TextStyle(
                             color: Color(0xff717576),
-                            fontSize: 10.0,
-                            letterSpacing: 0.5,
+                            fontSize: greyFontSize - 5,
                           ),
                         ),
                       ),
@@ -150,6 +189,56 @@ class _LogInPage extends State<LogInPage> {
           )
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          color: Color(0xff000000),
+          height: 50.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              FlatButton(
+                  color: blueColor,
+                  disabledColor: Color(0xff116191),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide()),
+                  onPressed: isFormDone ? _logIn : null,
+                  child: Text(
+                    'Log In',
+                    style: TextStyle(color: Colors.white),
+                  ))
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  _logIn() async {
+    Map<String, String> credentials = {};
+    if (usernameController.text.contains('@')) {
+      credentials['email'] = usernameController.text;
+    } else {
+      credentials['username'] = usernameController.text;
+    }
+    credentials['password'] = passwordController.text;
+
+    Response res = await post(ServerURL,
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode(credentials));
+    var status = (json.decode(res.body)['message']);
+    if (status == 'Success') {
+      Navigator.pushNamed(context, '/homepage');
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: status,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Color(0xff33828282),
+          textColor: Colors.white,
+          fontSize: 20.0);
+    }
   }
 }

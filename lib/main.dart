@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Homepage/Homepage.dart';
 import 'LogIn/LogInPage.dart';
-import 'LogIn/SignUp.dart';
+import 'LogIn/SignUpPage1.dart';
+import 'LogIn/SignUpPage2.dart';
 
 void main() {
   runApp(MyApp());
@@ -42,9 +44,13 @@ class _MyApp extends State<MyApp> {
             debugShowCheckedModeBanner: false,
 
             initialRoute: selectedInitialRoute,
+            // initialRoute :'/signUpPage2',
             routes: <String, WidgetBuilder>{
               '/logInPage': (context) => LogInPage(),
-              '/signUpPage': (context) => SignUpPage(),
+              '/signUpPage1': (context) => SignUpPage1(),
+              '/signUpPage2': (context) => SignUpPage2(),
+              '/homepage': (context) => Homepage(),
+              
             },
           );
         }

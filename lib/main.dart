@@ -27,7 +27,7 @@ Future<bool> isLoggedIn() async {
 }
 
 class _MyApp extends State<MyApp> {
-  String selectedInitialRoute = '';
+  String selectedInitialRoute = '/';
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -35,10 +35,12 @@ class _MyApp extends State<MyApp> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data) {
-            selectedInitialRoute = '/homePage';
+            // Navigator.popUntil(context, ModalRoute.withName('/homepage'));
+            selectedInitialRoute = '/homepage';
           } else {
             selectedInitialRoute = '/logInPage';
           }
+          print("Selected route: $selectedInitialRoute");
           return MaterialApp(
             // home: BaseApp(),
             debugShowCheckedModeBanner: false,
@@ -46,15 +48,15 @@ class _MyApp extends State<MyApp> {
             initialRoute: selectedInitialRoute,
             // initialRoute :'/signUpPage2',
             routes: <String, WidgetBuilder>{
+              // '/': (context) => CircularProgressIndicator(),
               '/logInPage': (context) => LogInPage(),
               '/signUpPage1': (context) => SignUpPage1(),
-              '/signUpPage2': (context) => SignUpPage2(),
+              // '/signUpPage2': (context) => SignUpPage2(),
               '/homepage': (context) => Homepage(),
-              
             },
           );
         }
-        return CircularProgressIndicator();
+        return Center(child: (CircularProgressIndicator()));
       },
     );
   }

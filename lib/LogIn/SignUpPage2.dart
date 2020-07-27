@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/User/userModel.dart';
 import 'package:mongo_dart/mongo_dart.dart' as Mongo;
 import 'package:http/http.dart';
@@ -22,6 +23,7 @@ class SignUpPage2 extends StatefulWidget {
 
 class _SignUpPage2 extends State<SignUpPage2> {
   User user;
+  
   _SignUpPage2({@required this.user});
 
   String email = '';
@@ -270,7 +272,12 @@ class _SignUpPage2 extends State<SignUpPage2> {
         headers: {'content-type': 'application/json'});
     var status = (json.decode(res.body)['message']);
     if (status == 'Success') {
-      Navigator.pushNamed(context, '/homepage');
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+      // Navigator.pushNamed(context, '/homepage');
+      prefs.setString('username', this.user.username);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/homepage', (Route<dynamic> route) => false);
     } else {
       Fluttertoast.showToast(
           msg: status,

@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final String ServerURL = 'http://192.168.1.2:8080/logIn';
 
@@ -228,9 +229,16 @@ class _LogInPage extends State<LogInPage> {
         body: jsonEncode(credentials));
     var status = (json.decode(res.body)['message']);
     if (status == 'Success') {
-      Navigator.pushNamed(context, '/homepage');
-    }
-    else{
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+      prefs.setString('username', credentials['username']);
+
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/homepage', (Route<dynamic> route) => false);
+
+      // Navigator.popAndPushNamed(context, '/homepage');
+
+    } else {
       Fluttertoast.showToast(
           msg: status,
           toastLength: Toast.LENGTH_LONG,

@@ -40,10 +40,16 @@ class _MyApp extends State<MyApp> {
           } else {
             selectedInitialRoute = '/logInPage';
           }
-          print("Selected route: $selectedInitialRoute");
+          // print("Selected route: $selectedInitialRoute");
           return MaterialApp(
             // home: BaseApp(),
             debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Colors.white,
+                displayColor: Colors.white
+              )
+            ),
 
             initialRoute: selectedInitialRoute,
             // initialRoute :'/signUpPage2',

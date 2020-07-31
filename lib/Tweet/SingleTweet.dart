@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'SingleTweetPage.dart';
 
 Widget buildTweetTile(tweet, context) {
+  // print(tweet['User']['profilePhoto']);
   return ListTile(
     onTap: () {
       Navigator.push(
@@ -23,8 +28,13 @@ Widget buildTweetTile(tweet, context) {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage('assets/images/eggIcon.jpg')),
+                      fit: BoxFit.fill,
+
+                      image: tweet['User']['profilePhoto'] == null
+                          ? AssetImage('assets/images/eggIcon.jpg')
+                          : NetworkImage(tweet['User'][
+                              'profilePhoto']), //AssetImage('assets/images/eggIcon.jpg')
+                    ),
                   )),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
@@ -34,9 +44,9 @@ Widget buildTweetTile(tweet, context) {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("username"),
+                      Text("${tweet['User']['username']}"),
                       Text(
-                        "jdkdbhdjkdbjdbdjdbdjjdkdbhdjkdbjdbdjdbdjjdkdbhdjkdbjdbdjdbdj",
+                        '${tweet['text']}',
                         softWrap: true,
                       )
                     ],
@@ -48,7 +58,7 @@ Widget buildTweetTile(tweet, context) {
                 alignment: Alignment.topRight,
                 icon: Icon(
                   Icons.keyboard_arrow_down,
-                  color: Colors.grey,
+                  color: Color(0xff49494B),
                 ),
                 onPressed: () {},
               )
@@ -82,7 +92,18 @@ Widget buildTweetTile(tweet, context) {
                       child: IconButton(
                           icon: Icon(FontAwesomeIcons.retweet,
                               color: Color(0xff49494B)),
-                          onPressed: () {}),
+                          onPressed: () async {
+                            String ServerURL =
+                                'http://192.168.1.2:8080/rttweet';
+                            var prefs = await SharedPreferences.getInstance();
+
+                            Response res = await post(ServerURL,
+                                headers: {'content-type': 'application/json'},
+                                body: jsonEncode({
+                                  'tweetId': tweet['_id'],
+                                  'userId': prefs.getString('user_id')
+                                }));
+                          }),
                     ),
                     Text('  ${tweet['retweetCount']}'),
                   ],
@@ -95,7 +116,18 @@ Widget buildTweetTile(tweet, context) {
                       child: IconButton(
                           icon: Icon(FontAwesomeIcons.heart,
                               color: Color(0xff49494B)),
-                          onPressed: () {}),
+                          onPressed: () async {
+                            String ServerURL =
+                                'http://192.168.1.2:8080/likeTweet';
+                            var prefs = await SharedPreferences.getInstance();
+
+                            Response res = await post(ServerURL,
+                                headers: {'content-type': 'application/json'},
+                                body: jsonEncode({
+                                  'tweetId': tweet['_id'],
+                                  'userId': prefs.getString('user_id')
+                                }));
+                          }),
                     ),
                     Text('  ${tweet['likeCount']}'),
                   ],
@@ -103,8 +135,7 @@ Widget buildTweetTile(tweet, context) {
                 Transform.scale(
                   scale: 1, //0.7,
                   child: IconButton(
-                      icon: Icon(FontAwesomeIcons.shareAlt,
-                          color: Color(0xff49494B)),
+                      icon: Icon(Icons.share, color: Color(0xff49494B)),
                       onPressed: () {}),
                 ),
               ],
@@ -113,6 +144,7 @@ Widget buildTweetTile(tweet, context) {
 
           Divider(
             color: Colors.grey,
+            height: 10,
           ),
         ],
       ),

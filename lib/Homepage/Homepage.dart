@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twitter_clone/Images/uploadImage.dart';
+import 'package:twitter_clone/Tweet/WriteTweet.dart';
 import './loadTweets.dart';
 
 class Homepage extends StatefulWidget {
@@ -22,17 +24,16 @@ class _Homepage extends State<Homepage> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
- Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/eggIcon.jpg'),
-                  ),
-                )),
-          
+          Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/images/eggIcon.jpg'),
+                ),
+              )),
           Icon(
             FontAwesomeIcons.twitter,
             color: blueColor,
@@ -59,7 +60,7 @@ class _Homepage extends State<Homepage> {
             decoration: BoxDecoration(color: backgroundColor),
           ),
           Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.only(top: 3.0),
             child: FutureBuilder(
               future: loadTweets(context),
               builder:
@@ -67,9 +68,12 @@ class _Homepage extends State<Homepage> {
                 if (snapshot.hasData) {
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.82,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: snapshot.data,
+                    child: RefreshIndicator(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: snapshot.data,
+                      ),
+                      onRefresh: _refresh,
                     ),
                   );
                 }
@@ -78,6 +82,17 @@ class _Homepage extends State<Homepage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => WriteTweet()));
+        },
+        child: Icon(
+          FontAwesomeIcons.featherAlt,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -95,7 +110,10 @@ class _Homepage extends State<Homepage> {
                 IconButton(
                     icon:
                         Icon(FontAwesomeIcons.search, color: Color(0xff49494B)),
-                    onPressed: () {}),
+                    onPressed: () {Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => (UploadImage())));}),
                 IconButton(
                     icon: Icon(FontAwesomeIcons.bell, color: Color(0xff49494B)),
                     onPressed: () {}),
@@ -118,5 +136,9 @@ class _Homepage extends State<Homepage> {
     // setState(() {
     //   username = name;
     // });
+  }
+
+  Future<void> _refresh() async {
+    setState(() {});
   }
 }

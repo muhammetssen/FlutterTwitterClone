@@ -5,9 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/User/userModel.dart';
-import 'package:mongo_dart/mongo_dart.dart' as Mongo;
 import 'package:http/http.dart';
-import 'SignUpPage1.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 final String ServerURL = 'http://192.168.1.2:8080/createAccount';
@@ -23,7 +21,7 @@ class SignUpPage2 extends StatefulWidget {
 
 class _SignUpPage2 extends State<SignUpPage2> {
   User user;
-  
+
   _SignUpPage2({@required this.user});
 
   String email = '';
@@ -270,17 +268,20 @@ class _SignUpPage2 extends State<SignUpPage2> {
     Response res = await post(ServerURL,
         body: jsonEncode(this.user.returnAsDict()),
         headers: {'content-type': 'application/json'});
-    var status = (json.decode(res.body)['message']);
-    if (status == 'Success') {
+    var status = (json.decode(res.body));
+    if (status['message'] == 'Success') {
       var prefs = await SharedPreferences.getInstance();
       prefs.setBool('isLoggedIn', true);
       // Navigator.pushNamed(context, '/homepage');
+      prefs.setString('user_id', status['_id']);
+
       prefs.setString('username', this.user.username);
+      print(status['_id']);
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/homepage', (Route<dynamic> route) => false);
     } else {
       Fluttertoast.showToast(
-          msg: status,
+          msg: status['message'],
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 3,

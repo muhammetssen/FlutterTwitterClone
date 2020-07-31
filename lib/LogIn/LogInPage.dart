@@ -228,10 +228,12 @@ class _LogInPage extends State<LogInPage> {
         headers: {'content-type': 'application/json'},
         body: jsonEncode(credentials));
     var status = (json.decode(res.body)['message']);
-    if (status == 'Success') {
+    if (status['message'] == 'Success') {
       var prefs = await SharedPreferences.getInstance();
       prefs.setBool('isLoggedIn', true);
       prefs.setString('username', credentials['username']);
+      prefs.setString('user_id', status['_id']);
+      print(status['_id']);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/homepage', (Route<dynamic> route) => false);

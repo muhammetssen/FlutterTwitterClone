@@ -7,8 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-final String ServerURL = 'http://192.168.1.2:8080/logIn';
+import '../globals.dart' as globals;
 
 class LogInPage extends StatefulWidget {
   @override
@@ -224,7 +223,7 @@ class _LogInPage extends State<LogInPage> {
     }
     credentials['password'] = passwordController.text;
 
-    Response res = await post(ServerURL,
+    Response res = await post(globals.ServerIP + 'logIn',
         headers: {'content-type': 'application/json'},
         body: jsonEncode(credentials));
     var status = (json.decode(res.body)['message']);

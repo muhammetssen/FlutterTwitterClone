@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Images/uploadImage.dart';
 import 'package:twitter_clone/Tweet/WriteTweet.dart';
@@ -17,8 +18,9 @@ class _Homepage extends State<Homepage> {
   final blueColor = Color(0xff1BA1F3);
 
   String username = '';
-
+  String imagePath;
   Widget _buildAppBar() {
+    if (imagePath == null) loadProfileImage();
     return AppBar(
       backgroundColor: backgroundColor,
       title: Row(
@@ -31,7 +33,9 @@ class _Homepage extends State<Homepage> {
                 shape: BoxShape.circle,
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage('assets/images/eggIcon.jpg'),
+                  image: AssetImage(imagePath != null
+                      ? imagePath
+                      : 'assets/images/eggIcon.jpg'), //AssetImage('assets/images/eggIcon.jpg'),
                 ),
               )),
           Icon(
@@ -44,11 +48,17 @@ class _Homepage extends State<Homepage> {
     );
   }
 
+  loadProfileImage() async {
+    var path = (await getApplicationDocumentsDirectory()).path;
+    imagePath = path + '/profilePicture.jpg';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (username == '') {
       getUsername();
     }
+    if (imagePath == null) loadProfileImage();
     // loadTweets(context);
     return Scaffold(
       appBar: _buildAppBar(),
@@ -110,10 +120,12 @@ class _Homepage extends State<Homepage> {
                 IconButton(
                     icon:
                         Icon(FontAwesomeIcons.search, color: Color(0xff49494B)),
-                    onPressed: () {Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => (UploadImage())));}),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => (UploadImage())));
+                    }),
                 IconButton(
                     icon: Icon(FontAwesomeIcons.bell, color: Color(0xff49494B)),
                     onPressed: () {}),

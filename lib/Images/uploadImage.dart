@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../globals.dart' as globals;
 
 class UploadImage extends StatefulWidget {
   @override
@@ -57,9 +59,13 @@ class _uploadImage extends State<UploadImage> {
     if (file == null) return;
     String base64Image = base64Encode(file.readAsBytesSync());
     String fileName = file.path.split("/").last;
-    String ServerURL = 'http://192.168.1.2:8080/setProfilePhoto';
+    // prefs.setString('profilePhoto', base64Image);
+    // writeImage(base64Image);
+    var path = (await getApplicationDocumentsDirectory()).path;
+    final File newImage = await file.copy('$path/profilePicture.jpg');
+    print(newImage.path);
 
-    http.post(ServerURL, body: {
+    http.post(globals.ServerIP + 'setProfilePhoto', body: {
       "image": base64Image,
       "userId": prefs.getString('user_id'),
     }).then((res) {

@@ -7,8 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/User/userModel.dart';
 import 'package:http/http.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-final String ServerURL = 'http://192.168.1.2:8080/createAccount';
+import '../globals.dart' as globals;
 
 class SignUpPage2 extends StatefulWidget {
   final User user;
@@ -265,7 +264,8 @@ class _SignUpPage2 extends State<SignUpPage2> {
   void _nextPage() async {
     this.user.username = usernameController.text;
     this.user.password = passwordController.text;
-    Response res = await post(ServerURL,
+    Response res = await post(
+      globals.ServerIP+'createAccount',
         body: jsonEncode(this.user.returnAsDict()),
         headers: {'content-type': 'application/json'});
     var status = (json.decode(res.body));

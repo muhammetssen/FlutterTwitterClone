@@ -1,20 +1,28 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'TweetBottomBar.dart';
 import 'SingleTweetPage.dart';
+import '../globals.dart' as globals;
 
 Widget buildTweetTile(tweet, context) {
-  // print(tweet['User']['profilePhoto']);
+  var bottomBar = buildTweetBottomBar(tweet);
   return ListTile(
-    onTap: () {
+    onTap: () async {
+      var prefs = await SharedPreferences.getInstance();
+      Response res = await post(
+        globals.ServerIP + "getTweet",
+        body: json.encode(
+            {'tweetId': tweet['_id'], 'userId': prefs.getString('user_id')}),
+        headers: {'content-type': 'application/json'},
+      );
+      var singleTweet = json.decode(res.body)['tweet'];
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SingleTweetPage(tweet: tweet)));
+              builder: (context) => SingleTweetPage(tweet: singleTweet)));
     },
     subtitle: Container(
       child: Column(
@@ -67,81 +75,8 @@ Widget buildTweetTile(tweet, context) {
 
           Container(
             height: 30,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Transform.scale(
-                      scale: 1, //0.7,
-                      child: IconButton(
-                          icon: Icon(FontAwesomeIcons.comment,
-                              color: Color(0xff49494B)),
-                          onPressed: () {}),
-                    ),
-                    Text('  ${tweet['replyCount']}'),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Transform.scale(
-                      scale: 1, //0.7,
-                      child: IconButton(
-                          icon: Icon(FontAwesomeIcons.retweet,
-                              color: Color(0xff49494B)),
-                          onPressed: () async {
-                            String ServerURL =
-                                'http://192.168.1.2:8080/rttweet';
-                            var prefs = await SharedPreferences.getInstance();
-
-                            Response res = await post(ServerURL,
-                                headers: {'content-type': 'application/json'},
-                                body: jsonEncode({
-                                  'tweetId': tweet['_id'],
-                                  'userId': prefs.getString('user_id')
-                                }));
-                          }),
-                    ),
-                    Text('  ${tweet['retweetCount']}'),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Transform.scale(
-                      scale: 1, //0.7,
-                      child: IconButton(
-                          icon: Icon(FontAwesomeIcons.heart,
-                              color: Color(0xff49494B)),
-                          onPressed: () async {
-                            String ServerURL =
-                                'http://192.168.1.2:8080/likeTweet';
-                            var prefs = await SharedPreferences.getInstance();
-
-                            Response res = await post(ServerURL,
-                                headers: {'content-type': 'application/json'},
-                                body: jsonEncode({
-                                  'tweetId': tweet['_id'],
-                                  'userId': prefs.getString('user_id')
-                                }));
-                          }),
-                    ),
-                    Text('  ${tweet['likeCount']}'),
-                  ],
-                ),
-                Transform.scale(
-                  scale: 1, //0.7,
-                  child: IconButton(
-                      icon: Icon(Icons.share, color: Color(0xff49494B)),
-                      onPressed: () {}),
-                ),
-              ],
-            ),
+            child: bottomBar,
           ), // tuslar
-
           Divider(
             color: Colors.grey,
             height: 10,

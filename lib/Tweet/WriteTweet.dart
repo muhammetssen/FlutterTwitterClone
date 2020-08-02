@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../globals.dart' as globals;
 class WriteTweet extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -166,10 +166,8 @@ class _WriteTweet extends State<WriteTweet> {
     tweet['full_text'] = tweetController.text;
     var prefs = await SharedPreferences.getInstance();
     tweet['_id'] = prefs.getString('user_id');
-    String ServerURL = 'http://192.168.1.2:8080/createTweet';
-    print(tweet.toString());
     Response res = await post(
-      ServerURL,
+      globals.ServerIP+'createTweet',
       body: jsonEncode(tweet),
       headers: {'content-type': 'application/json'},
     );

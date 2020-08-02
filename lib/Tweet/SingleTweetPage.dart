@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'TweetBottomBar.dart';
 
 class SingleTweetPage extends StatefulWidget {
   var tweet;
@@ -39,26 +42,29 @@ class _SingleTweetPage extends State<SingleTweetPage> {
                 height: 80,
                 child: Row(children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
                         height: 50,
                         width: 50,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/eggIcon.jpg')),
-                        )),
-                  ),
+                            fit: BoxFit.fill,
+                            image: tweet['User']['profilePhoto'] == null
+                                ? AssetImage('assets/images/eggIcon.jpg')
+                                : NetworkImage(tweet['User']['profilePhoto']),
+                          ),
+                        ),
+                      )),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('name'),
+                        Text(tweet['User']['name']),
                         Text(
-                          '@username',
+                          tweet['User']['username'],
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -118,28 +124,7 @@ class _SingleTweetPage extends State<SingleTweetPage> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Container(
                   height: 40,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(FontAwesomeIcons.comment,
-                              color: Color(0xff49494B)),
-                          onPressed: () {}),
-                      IconButton(
-                          icon: Icon(FontAwesomeIcons.retweet,
-                              color: Color(0xff49494B)),
-                          onPressed: () {}),
-                      IconButton(
-                          icon: Icon(FontAwesomeIcons.heart,
-                              color: Color(0xff49494B)),
-                          onPressed: () {}),
-                      IconButton(
-                          icon: Icon(FontAwesomeIcons.shareAlt,
-                              color: Color(0xff49494B)),
-                          onPressed: () {}),
-                    ],
-                  ),
+                  child: buildTweetBottomBar(tweet),
                 ),
               ),
               Divider(

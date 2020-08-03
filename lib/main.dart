@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Homepage/Homepage.dart';
 import 'LogIn/LogInPage.dart';
 import 'LogIn/SignUpPage1.dart';
-import 'LogIn/SignUpPage2.dart';
 
 void main() {
   runApp(MyApp());

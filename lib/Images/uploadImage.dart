@@ -10,11 +10,11 @@ import '../globals.dart' as globals;
 class UploadImage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _uploadImage();
+    return _UploadImage();
   }
 }
 
-class _uploadImage extends State<UploadImage> {
+class _UploadImage extends State<UploadImage> {
   File file;
   @override
   Widget build(BuildContext context) {
@@ -58,14 +58,13 @@ class _uploadImage extends State<UploadImage> {
     var prefs = await SharedPreferences.getInstance();
     if (file == null) return;
     String base64Image = base64Encode(file.readAsBytesSync());
-    String fileName = file.path.split("/").last;
     // prefs.setString('profilePhoto', base64Image);
     // writeImage(base64Image);
     var path = (await getApplicationDocumentsDirectory()).path;
     final File newImage = await file.copy('$path/profilePicture.jpg');
     print(newImage.path);
 
-    http.post(globals.ServerIP + 'setProfilePhoto', body: {
+    http.post(globals.serverIP + 'setProfilePhoto', body: {
       "image": base64Image,
       "userId": prefs.getString('user_id'),
     }).then((res) {

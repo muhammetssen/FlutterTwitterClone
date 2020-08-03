@@ -223,16 +223,16 @@ class _LogInPage extends State<LogInPage> {
     }
     credentials['password'] = passwordController.text;
 
-    Response res = await post(globals.ServerIP + 'logIn',
+    Response res = await post(globals.serverIP + 'logIn',
         headers: {'content-type': 'application/json'},
         body: jsonEncode(credentials));
-    var status = (json.decode(res.body)['message']);
+    var status = (json.decode(res.body));
     if (status['message'] == 'Success') {
       var prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', true);
       prefs.setString('username', credentials['username']);
       prefs.setString('user_id', status['_id']);
-      print(status['_id']);
+      prefs.setBool('isLoggedIn', true);
+      // print(status['_id']);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/homepage', (Route<dynamic> route) => false);
@@ -241,7 +241,7 @@ class _LogInPage extends State<LogInPage> {
 
     } else {
       Fluttertoast.showToast(
-          msg: status,
+          msg: status['message'],
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 3,

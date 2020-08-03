@@ -13,7 +13,7 @@ Widget buildTweetTile(tweet, context) {
     onTap: () async {
       var prefs = await SharedPreferences.getInstance();
       Response res = await post(
-        globals.ServerIP + "getTweet",
+        globals.serverIP + "getTweet",
         body: json.encode(
             {'tweetId': tweet['_id'], 'userId': prefs.getString('user_id')}),
         headers: {'content-type': 'application/json'},

@@ -58,10 +58,10 @@ Widget buildTweetBottomBar(tweet) {
                     tweet['hasRetweeted'] = true;
                     retweetIconNotifier.value = retweetIcon;
                   }
-                  String ServerURL = globals.ServerIP+'rttweet';
+                  String serverURL = globals.serverIP+'rttweet';
                   var prefs = await SharedPreferences.getInstance();
 
-                  Response res = await post(ServerURL,
+                   await post(serverURL,
                       headers: {'content-type': 'application/json'},
                       body: jsonEncode({
                         'tweetId': tweet['_id'],
@@ -99,10 +99,10 @@ Widget buildTweetBottomBar(tweet) {
                     tweet['hasLiked'] = true;
                     likeIconNotifier.value = likedIcon;
                   }
-                  String ServerURL = globals.ServerIP+'likeTweet';
+                  String serverURL = globals.serverIP+'likeTweet';
                   var prefs = await SharedPreferences.getInstance();
 
-                  Response res = await post(ServerURL,
+                   await post(serverURL,
                       headers: {'content-type': 'application/json'},
                       body: jsonEncode({
                         'tweetId': tweet['_id'],

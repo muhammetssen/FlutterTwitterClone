@@ -1,14 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Images/uploadImage.dart';
 import 'package:twitter_clone/Tweet/WriteTweet.dart';
 import './loadTweets.dart';
+import '../globals.dart' as globals;
+import 'Drawer.dart';
+
+var user;
 
 class Homepage extends StatefulWidget {
+  void getCurrentUser() async {
+    var prefs = await SharedPreferences.getInstance();
+    Response res = await post(
+      globals.serverIP + 'getUser',
+      body: json.encode({'userId': prefs.getString('user_id')}),
+      headers: {'content-type': 'application/json'},
+    );
+    var response = json.decode(res.body);
+    if (response['message'] != "Success") return;
+    user = response['user'];
+  }
+
   @override
   State<StatefulWidget> createState() {
+    getCurrentUser();
     return _Homepage();
   }
 }
@@ -16,7 +36,8 @@ class Homepage extends StatefulWidget {
 class _Homepage extends State<Homepage> {
   final backgroundColor = Color(0xff000000);
   final blueColor = Color(0xff1BA1F3);
-
+  var profilePhoto;
+  var currentUser;
   String username = '';
   String imagePath;
   Widget _buildAppBar() {
@@ -33,16 +54,18 @@ class _Homepage extends State<Homepage> {
                 shape: BoxShape.circle,
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage(imagePath != null
-                      ? imagePath
-                      : 'assets/images/eggIcon.jpg'), //AssetImage('assets/images/eggIcon.jpg'),
+                  image: user == null
+                      ? AssetImage('assets/images/eggIcon.jpg')
+                      : NetworkImage(user['profilePhoto']),
+//AssetImage('assets/images/eggIcon.jpg'),
                 ),
               )),
           Icon(
             FontAwesomeIcons.twitter,
             color: blueColor,
           ),
-          Icon(FontAwesomeIcons.star, color: Colors.black),
+          IconButton(
+              icon: Icon(Icons.refresh, color: blueColor), onPressed: _refresh),
         ],
       ),
     );
@@ -62,6 +85,7 @@ class _Homepage extends State<Homepage> {
     // loadTweets(context);
     return Scaffold(
       appBar: _buildAppBar(),
+      drawer: buildDrawer(user),
       body: Stack(
         children: <Widget>[
           Container(

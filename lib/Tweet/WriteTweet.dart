@@ -167,7 +167,7 @@ class _WriteTweet extends State<WriteTweet> {
     var prefs = await SharedPreferences.getInstance();
     tweet['_id'] = prefs.getString('user_id');
     await post(
-      globals.serverIP+'createTweet',
+      globals.serverIP+'tweet/createTweet',
       body: jsonEncode(tweet),
       headers: {'content-type': 'application/json'},
     );

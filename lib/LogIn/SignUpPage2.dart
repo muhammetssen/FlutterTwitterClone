@@ -265,7 +265,7 @@ class _SignUpPage2 extends State<SignUpPage2> {
     this.user.username = usernameController.text;
     this.user.password = passwordController.text;
     Response res = await post(
-      globals.serverIP+'createAccount',
+      globals.serverIP+'user/createAccount',
         body: jsonEncode(this.user.returnAsDict()),
         headers: {'content-type': 'application/json'});
     var status = (json.decode(res.body));

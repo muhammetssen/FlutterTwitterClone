@@ -223,7 +223,7 @@ class _LogInPage extends State<LogInPage> {
     }
     credentials['password'] = passwordController.text;
 
-    Response res = await post(globals.serverIP + 'logIn',
+    Response res = await post(globals.serverIP + 'user/logIn',
         headers: {'content-type': 'application/json'},
         body: jsonEncode(credentials));
     var status = (json.decode(res.body));

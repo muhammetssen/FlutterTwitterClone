@@ -64,7 +64,7 @@ class _UploadImage extends State<UploadImage> {
     final File newImage = await file.copy('$path/profilePicture.jpg');
     print(newImage.path);
 
-    http.post(globals.serverIP + 'setProfilePhoto', body: {
+    http.post(globals.serverIP + 'user/setProfilePhoto', body: {
       "image": base64Image,
       "userId": prefs.getString('user_id'),
     }).then((res) {

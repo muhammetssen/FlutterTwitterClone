@@ -10,7 +10,7 @@ import '../globals.dart' as globals;
 Future<List<Widget>> loadTweets(BuildContext context) async {
   var prefs = await SharedPreferences.getInstance();
   Response res = await post(
-    globals.serverIP + 'getAllTweets',
+    globals.serverIP + 'tweet/getAllTweets',
     body: json.encode({'userId': prefs.getString('user_id')}),
     headers: {'content-type': 'application/json'},
   );

@@ -14,26 +14,29 @@ import 'Drawer.dart';
 var user;
 
 class Homepage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _Homepage();
+  }
+}
+
+class _Homepage extends State<Homepage> {
   void getCurrentUser() async {
     var prefs = await SharedPreferences.getInstance();
     Response res = await post(
-      globals.serverIP + 'getUser',
+      globals.serverIP + 'user/getUser',
       body: json.encode({'userId': prefs.getString('user_id')}),
       headers: {'content-type': 'application/json'},
     );
     var response = json.decode(res.body);
     if (response['message'] != "Success") return;
     user = response['user'];
+    setState(() {});
   }
 
-  @override
-  State<StatefulWidget> createState() {
+  _Homepage() {
     getCurrentUser();
-    return _Homepage();
   }
-}
-
-class _Homepage extends State<Homepage> {
   final backgroundColor = Color(0xff000000);
   final blueColor = Color(0xff1BA1F3);
   var profilePhoto;
@@ -41,29 +44,41 @@ class _Homepage extends State<Homepage> {
   String username = '';
   String imagePath;
   Widget _buildAppBar() {
-    if (imagePath == null) loadProfileImage();
+    // if (imagePath == null) loadProfileImage();
     return AppBar(
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Builder(builder: (BuildContext context) {
+              return InkWell(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: user == null
+                            ? AssetImage('assets/images/eggIcon.jpg')
+                            : NetworkImage(user['profilePhoto']),
+                      ),
+                    )),
+              );
+            }),
+      ),
       backgroundColor: backgroundColor,
+      centerTitle:true,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: user == null
-                      ? AssetImage('assets/images/eggIcon.jpg')
-                      : NetworkImage(user['profilePhoto']),
-//AssetImage('assets/images/eggIcon.jpg'),
-                ),
-              )),
+          Spacer(),
           Icon(
             FontAwesomeIcons.twitter,
             color: blueColor,
           ),
+          Spacer(),
           IconButton(
               icon: Icon(Icons.refresh, color: blueColor), onPressed: _refresh),
         ],
@@ -78,14 +93,15 @@ class _Homepage extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    if (username == '') {
-      getUsername();
-    }
-    if (imagePath == null) loadProfileImage();
+    if (user == null)
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     // loadTweets(context);
+    if (imagePath == null) loadProfileImage(); //Use static egg image
     return Scaffold(
       appBar: _buildAppBar(),
-      drawer: buildDrawer(user),
+      drawer: buildDrawer(user == null ? '' : user),
       body: Stack(
         children: <Widget>[
           Container(
@@ -111,7 +127,7 @@ class _Homepage extends State<Homepage> {
                     ),
                   );
                 }
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               },
             ),
           ),

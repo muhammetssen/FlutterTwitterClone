@@ -1,9 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 final backgroundColor = Color(0xff000000);
 final blueColor = Color(0xff1BA1F3);
 Widget buildDrawer(user) {
+  if (user == '') return CircularProgressIndicator();
   Color greyColor = Color(0xff49494B);
   return Drawer(
       child: Stack(

@@ -4,11 +4,12 @@ import 'TweetBottomBar.dart';
 
 class SingleTweetPage extends StatefulWidget {
   final tweet;
-  SingleTweetPage({this.tweet});
+  final bottomBar;
+  SingleTweetPage({this.tweet, this.bottomBar});
   @override
   State<StatefulWidget> createState() {
     // print(tweet);
-    return _SingleTweetPage(tweet);
+    return _SingleTweetPage(tweet, bottomBar);
   }
 }
 
@@ -16,8 +17,11 @@ class _SingleTweetPage extends State<SingleTweetPage> {
   final blueColor = Color(0xff1BA1F3);
   final backgroundColor = Color(0xff000000);
   var tweet;
-  _SingleTweetPage(tweet) {
+  var bottomBar;
+  _SingleTweetPage(tweet, bottomBar) {
     this.tweet = tweet;
+    this.bottomBar = bottomBar;
+    print(this.bottomBar.toString());
   }
   @override
   Widget build(BuildContext context) {
@@ -122,8 +126,10 @@ class _SingleTweetPage extends State<SingleTweetPage> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Container(
                   height: 40,
-                  child: buildTweetBottomBar(tweet),
+                  child: this.bottomBar.build(),
                 ),
+                
+                
               ),
               Divider(
                 color: Colors.grey,

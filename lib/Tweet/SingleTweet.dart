@@ -8,12 +8,13 @@ import 'SingleTweetPage.dart';
 import '../globals.dart' as globals;
 
 Widget buildTweetTile(tweet, context) {
-  var bottomBar = buildTweetBottomBar(tweet);
+  TweetBottomBar bar = new TweetBottomBar(tweet);
+  Widget bottomBar = bar.build();
   return ListTile(
     onTap: () async {
       var prefs = await SharedPreferences.getInstance();
       Response res = await post(
-        globals.serverIP + "getTweet",
+        globals.serverIP + "tweet/getTweet",
         body: json.encode(
             {'tweetId': tweet['_id'], 'userId': prefs.getString('user_id')}),
         headers: {'content-type': 'application/json'},
@@ -22,7 +23,7 @@ Widget buildTweetTile(tweet, context) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SingleTweetPage(tweet: singleTweet)));
+              builder: (context) => SingleTweetPage(tweet: singleTweet,bottomBar: bar,)));
     },
     subtitle: Container(
       child: Column(

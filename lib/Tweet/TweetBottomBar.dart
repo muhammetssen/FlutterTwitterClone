@@ -53,13 +53,13 @@ class TweetBottomBar {
     retweetIconNotifier.value = notRetweetIcon;
   }
 
-  Widget build() {
+  Widget buildSingle() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
@@ -72,7 +72,7 @@ class TweetBottomBar {
           ],
         ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
@@ -108,7 +108,7 @@ class TweetBottomBar {
           ],
         ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
@@ -152,6 +152,110 @@ class TweetBottomBar {
               icon: Icon(Icons.share, color: Color(0xff49494B)),
               onPressed: () {}),
         ),
+      ],
+    );
+  }
+
+  Widget buildPage() {
+    return Column(
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          height: 25,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              ValueListenableBuilder(
+                valueListenable: retweetNotifier,
+                builder: (BuildContext context, int newValue, Widget child) {
+                  return Text('$newValue  Retweets');
+                },
+              ),
+               ValueListenableBuilder(
+              valueListenable: likeNotifier,
+              builder: (BuildContext context, int newValue, Widget child) {
+                return Text('     $newValue  Likes' );
+              },
+            ),
+            ],
+          ),
+        ),
+        Divider(
+          height: 5,
+          color: Colors.grey,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Transform.scale(
+              scale: 0.8, //0.7,
+              child: IconButton(
+                  icon:
+                      Icon(FontAwesomeIcons.comment, color: Color(0xff49494B)),
+                  onPressed: () {}),
+            ),
+            Transform.scale(
+              scale: 0.8, //0.7,
+              child: IconButton(
+                  icon: ValueListenableBuilder(
+                      valueListenable: retweetIconNotifier,
+                      builder: (BuildContext context, Icon icon, child) {
+                        return icon;
+                      }),
+                  onPressed: () async {
+                    if (tweet['hasRetweeted']) {
+                      this.undoRetweet();
+                    } else {
+                      this.retweet();
+                    }
+                    String serverURL = globals.serverIP + 'tweet/rttweet';
+                    var prefs = await SharedPreferences.getInstance();
+
+                    await post(serverURL,
+                        headers: {'content-type': 'application/json'},
+                        body: jsonEncode({
+                          'tweetId': tweet['_id'],
+                          'userId': prefs.getString('user_id')
+                        }));
+                  }),
+            ),
+            Transform.scale(
+              scale: 0.8, //0.7,
+              child: IconButton(
+                  icon: ValueListenableBuilder(
+                      valueListenable: likeIconNotifier,
+                      builder: (BuildContext context, Icon icon, Widget child) {
+                        return icon;
+                      }),
+                  onPressed: () async {
+                    // tweetModel.like();
+                    if (tweet['hasLiked']) {
+                      this.dislike();
+                    } else {
+                      this.like();
+                    }
+                    String serverURL = globals.serverIP + 'tweet/likeTweet';
+                    var prefs = await SharedPreferences.getInstance();
+
+                    await post(serverURL,
+                        headers: {'content-type': 'application/json'},
+                        body: jsonEncode({
+                          'tweetId': tweet['_id'],
+                          'userId': prefs.getString('user_id')
+                        }));
+                  }),
+            ),Transform.scale(
+          scale: 0.8, //0.7,
+          child: IconButton(
+              icon: Icon(Icons.share, color: Color(0xff49494B)),
+              onPressed: () {}),
+        ),
+          ],
+        )
+
+
       ],
     );
   }

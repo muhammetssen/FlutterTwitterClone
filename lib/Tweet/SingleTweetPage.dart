@@ -64,9 +64,9 @@ class _SingleTweetPage extends State<SingleTweetPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(tweet['User']['name']),
+                        Text(tweet['User']['name'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
                         Text(
-                          tweet['User']['username'],
+                          '@${tweet['User']['username']}',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -100,50 +100,16 @@ class _SingleTweetPage extends State<SingleTweetPage> {
               Divider(
                 color: Colors.grey,
               ),
-              Container(
-                height: 25,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text('  ${tweet['retweetCount']}'),
-                    Text(
-                      ' Retweets         ',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    Text('${tweet['likeCount']}'),
-                    Text(
-                      ' Likes         ',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(
-                color: Colors.grey,
-              ),
-
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Container(
-                  height: 40,
-                  child: this.bottomBar.build(),
+                  height: 80,
+                  child: this.bottomBar.buildPage(),
                 ),
-                
-                
               ),
               Divider(
                 color: Colors.grey,
               ),
-              // ListView(
-
-              // )
-
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Text(
-              //     '${tweet['retweetCount']} Retweets  ${tweet['likeCount']} Likes',
-              //     style: TextStyle(color: Colors.grey),),
-              // ),
             ],
           ),
         ],

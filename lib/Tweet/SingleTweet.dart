@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twitter_clone/User/profilePage.dart';
 import 'TweetBottomBar.dart';
 import 'SingleTweetPage.dart';
 import '../globals.dart' as globals;
 
 Widget buildTweetTile(tweet, context) {
+  Color greyColor = Color(0xff49494B);
+
   TweetBottomBar bar = new TweetBottomBar(tweet);
-  Widget bottomBar = bar.build();
+  Widget bottomBar = bar.buildSingle();
   return ListTile(
     onTap: () async {
       var prefs = await SharedPreferences.getInstance();
@@ -31,7 +34,12 @@ Widget buildTweetTile(tweet, context) {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Container(
+               Builder(builder: (BuildContext context) {
+              return InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => profilePage(userId:tweet['User']['_id'])));
+                },
+                child: Container(
                   height: 50,
                   width: 50,
                   decoration: BoxDecoration(
@@ -45,6 +53,9 @@ Widget buildTweetTile(tweet, context) {
                               'profilePhoto']), //AssetImage('assets/images/eggIcon.jpg')
                     ),
                   )),
+              );
+            }),
+              
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Container(
@@ -53,7 +64,11 @@ Widget buildTweetTile(tweet, context) {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("${tweet['User']['username']}"),
+                      Row(children: <Widget>[
+                      Text("${tweet['User']['name']} ",style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text("@${tweet['User']['username']}",style: TextStyle(color: greyColor),),
+
+                      ],),
                       Text(
                         '${tweet['text']}',
                         softWrap: true,

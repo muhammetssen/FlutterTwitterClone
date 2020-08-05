@@ -95,9 +95,11 @@ Widget buildDrawer(user) {
                       child: Icon(FontAwesomeIcons.user, color: greyColor),
                     ),
                     Padding(
+                      
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
                         "Profile",
+                        
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w300),
                       ),

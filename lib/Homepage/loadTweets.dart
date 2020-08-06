@@ -16,7 +16,7 @@ Future<List<Widget>> loadTweets(BuildContext context) async {
   );
   List<dynamic> response = json.decode(res.body)['message'];
   List<Widget> posts =
-      response.map((dynamic item) => buildTweetTile(item, context)).toList();
+      (json.decode(res.body)['message'] as List<dynamic>).map((dynamic item) => buildTweetTile(item, context)).toList();
 
   // 1 tweet 1 chıld 1 widget
   return (posts);

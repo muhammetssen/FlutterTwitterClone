@@ -32,6 +32,9 @@ dependencies:
   fluttertoast: ^7.0.1
   image_picker: any
   path_provider: any
+  url_launcher : any
+  sticky_headers: ^0.1.8
+
   
 
 

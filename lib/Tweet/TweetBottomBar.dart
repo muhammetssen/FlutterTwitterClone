@@ -59,7 +59,7 @@ class TweetBottomBar {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
@@ -68,11 +68,11 @@ class TweetBottomBar {
                       Icon(FontAwesomeIcons.comment, color: Color(0xff49494B)),
                   onPressed: () {}),
             ),
-            Text('  ${tweet['replyCount']}'),
+            Text('${tweet['replyCount']}'),
           ],
         ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
@@ -108,7 +108,7 @@ class TweetBottomBar {
           ],
         ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Transform.scale(
               scale: 1, //0.7,
